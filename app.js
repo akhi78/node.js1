@@ -25,21 +25,23 @@ const ConnectDB = async () => {
 
 ConnectDB();
 
+//convert to object
+const ConverttoObj = (items) => {
+  return {
+    player_id: items.player_id,
+    player_name: items.player_name,
+    jersey_number: items.jersey_number,
+    role: items.role,
+  };
+};
+
 //Get method
 
 app.get("/players/", async (req, res) => {
   const query = `SELECT * FROM cricket_team`;
   const detail = await db.all(query);
-  //   console.log(listFormet);
-  const GetAllPlayerRes = detail.map((items) => {
-    return {
-      player_id: items.player_id,
-      player_name: items.player_name,
-      jersey_number: items.jersey_number,
-      role: items.role,
-    };
-  });
-  res.send(GetAllPlayerRes);
+  //   console.log(typeof GetAllPlayerRes);
+  res.send(detail.map((item) => ConverttoObj(item)));
 });
 
 // Post method
@@ -58,13 +60,7 @@ app.get("/players/:playerId/", async (req, res) => {
   const { playerId } = req.params;
   const query = `SELECT * FROM cricket_team WHERE player_id=${playerId}`;
   const playerDetail = await db.get(query);
-  const listFormet = {
-    player_id: playerDetail.player_id,
-    player_name: playerDetail.player_name,
-    jersey_number: playerDetail.jersey_number,
-    role: playerDetail.role,
-  };
-  res.send(listFormet);
+  res.send(ConverttoObj(playerDetail));
 });
 
 //update player detail
